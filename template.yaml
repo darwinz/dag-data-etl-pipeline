@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Parameters:
+  BucketPrefix:
+    Type: String
+    Default: 'data'
+Resources:
+  TestLambdaS3:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub "${BucketPrefix}-testlambdas3"
+      AccessControl: BucketOwnerFullControl
+      NotificationConfiguration:
+        LambdaConfigurations:
+          -
+            Event: 's3:ObjectCreated:*'
+            Function: !GetAtt
+              - TestLambda
+              - Arn
+    DependsOn : InvokePermissions
+
+  InvokePermissions:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+        Action: 'lambda:InvokeFunction'
+        FunctionName: !GetAtt
+          - TestLambda
+          - Arn
+        Principal: s3.amazonaws.com
+        SourceAccount: !Ref 'AWS::AccountId'
+        SourceArn: !Sub "arn:aws:s3:::${BucketPrefix}-testlambdas3"
+    DependsOn: TestLambda
+
+  TestLambda:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: dag_exercise.handler
+      Runtime: python3.7
+      CodeUri:
+        Bucket: "testlambdas3"
+        Key: 'dag_exercise.zip'
+      FunctionName: 'testlambda'
+      Role: !GetAtt
+        - TestLambdaRole
+        - Arn
+    DependsOn: TestLambdaRole
+
+  TestLambdaRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: 'testlambdarole'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        -
+          PolicyName: 'testlambdareads3'
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: 'Allow'
+                Action:
+                  - 's3:Get*'
+                  - 's3:List*'
+                Resource: "*"
+        - PolicyName: 'testcloudwatch'
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'logs:*'
+                Resource: "*"
+        -
+          PolicyName: 'testaddtodynamodb'
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action: "dynamodb:*"
+                Resource: "*"
+
+  TestDynDBSpecies:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: "graph_id"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "graph_id"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      TableName: 'TestSpeciesGraphs'

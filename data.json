@@ -1,0 +1,25 @@
+[
+  {
+    "Monkey": "Animal",
+    "Dog": "Mammal",
+    "Frog": "Amphibian",
+    "Tree": "Plant",
+    "Plant": "Organism"
+  },
+  {
+    "Animal": "Organism",
+    "Human": "Animal",
+    "Goat": "Mammal",
+    "Lizard": "Reptile",
+    "Reptile": "Animal"
+  },
+  {
+    "Bush": "Plant",
+    "Snake": "Reptile",
+    "Reptile": "Animal",
+    "Animal": "Organism",
+    "Insect": "Organism",
+    "Mosquito": "Insect",
+    "Spider": "Insect"
+  }
+]
