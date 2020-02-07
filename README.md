@@ -2,7 +2,7 @@
 
 ## Description
 
-Lambda function that retrieves a data file from S3 and inserts each item in DynamDB as JSON
+Lambda function that retrieves a data file from S3 and inserts each item in DynamoDB as JSON
 
 The data is stored as a JSON object in a non-relational data store, 
 similar to the following:
