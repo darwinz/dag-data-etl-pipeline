@@ -4,7 +4,7 @@
 
 Lambda function that listens for a file in S3 and retrieves the data file from S3 and inserts each item in DynamoDB as JSON
 
-The data is stored as a JSON object in a non-relational data store, 
+The data is stored in a non-relational data store as a JSON object in the form of a `Directed Acyclic Graph (DAG)`, 
 similar to the following:
 
 ```json
