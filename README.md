@@ -22,7 +22,7 @@ similar to the following:
 ## Deployment
 
 To deploy the solution to AWS, simply run the provided `deploy.sh` shell script, which 
-will zip the files and package them as a CloudFormation artifact, and then deploy the stack
+will zip the files and package them as a CloudFormation artifact, and then deploy the CloudFormation stack using AWS CLI
 
 ```bash
 $ ./deploy.sh
